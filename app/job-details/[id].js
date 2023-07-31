@@ -9,6 +9,8 @@ import { COLORS, icons, SIZES} from '../../constants';
 import useFetch  from "../../hook/useFetch";
 
 
+const tabs =["About", "Qualifications", "Responsibilities"];
+
 const JobDetails =() => {
     const params = useSearchParams();
     const router = useRouter();
@@ -19,7 +21,32 @@ const JobDetails =() => {
 
     const [refreshing, stRefreshing] = useState(false);
 
+    const [activeTab, setActiveTab] = useState(tabs[0]);
+
     const onRefresh=()=> {}
+
+    const displayTabContent =() => {
+        switch (activeTab) {
+            case "Qualifications":
+                return <Specifics
+                    title="Qualifications"
+                    points={data[0].job_highlights?.Qualifications ?? ['N/A']}
+                />
+            case "About":
+                return <JobAbout
+                    info={data[0].job_description ?? "No data provided"}
+                />
+            
+            case "Responsibilities":
+                return <Specifics
+                    title="Responsibilities"
+                    points={data[0].job_highlights?.Responsibilities ?? ['N/A']}
+                />
+
+            default:
+                break;
+        }
+    }
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite}}>
@@ -56,7 +83,7 @@ const JobDetails =() => {
                    ) : error? (
                     <Text>Something Went Wrong</Text>
                    ) : data.length==0 ?(
-                    <Text>No Dat</Text>
+                    <Text>Loading...</Text>
                    ) : (
                     <View style={{ padding: SIZES.medium, paddingBottom : 100}}>
                         <Company
@@ -66,16 +93,21 @@ const JobDetails =() => {
                              Location={data[0].job_country}                           
                         />
 
-                        <JobTabs
-                        
-
-                        
+                        <JobTabs           
+                            tabs={tabs}
+                            activeTab={activeTab}
+                            setActiveTab={setActiveTab}
                         />
+
+                        {displayTabContent()}
 
                     </View>
                    )} 
 
                 </ScrollView>
+
+                <JobFooter url={data[0]?.job_google_link ?? 
+                    'https://careers.google.com/jobs/results'}/>
             </>
 
         </SafeAreaView>
