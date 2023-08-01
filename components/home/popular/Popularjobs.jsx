@@ -16,7 +16,8 @@ const Popularjobs = () => {
   const [selectedJob, setSelectedJob] =useState()
 
   const handleCardPress = (item) => {
-
+    router.push(`/job-details/${item.job_id}`);
+    setSelectedJob(item.job_id)
   }
 
 
@@ -29,24 +30,28 @@ const Popularjobs = () => {
           <Text style={styles.headerBtn}>Show All</Text>
         </TouchableOpacity>
       </View>
+
       <View style={styles.cardsContainer}>
         {isLoading ? (
           <ActivityIndicator size="large" color={COLORS.primary} />
         ) : error ? (
           <Text>Something went wrong</Text>
         ) : (
+
           <FlatList
             data={data}
             renderItem={({ item }) => (
               <PopularJobCard
-                key={item.job_id}
                 item={item}
+                selectedJob={selectedJob}
+                handleCardPress={handleCardPress}
               />
             )}
-            keyExtractor={(item) => item.job_id.toString()}
+            keyExtractor={item => item?.job_id}
             contentContainerStyle={{ columnGap: SIZES.medium }}
             horizontal
           />
+
         )}
       </View>
     </View>
